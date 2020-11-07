@@ -15,11 +15,11 @@ clean:
 clean-temp:
 	@rm -rf *.o
 
-server: main.o httplib.o static.o
+server: server.o httplib.o static.o
 	$(GCC) $(COMPILE_FLAGS) -o server $^
 	make clean-temp
 
-main.o: main.c httplib.h
+server.o: server.c httplib.h
 	$(GCC) $(COMPILE_FLAGS) -c -o server.o server.c
 
 httplib.o: httplib.c httplib.h
