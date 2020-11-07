@@ -1,37 +1,65 @@
-## Welcome to GitHub Pages
+# Simple HTTP Server
 
-You can use the [editor on GitHub](https://github.com/AppLoidx/c-http-server/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Repository build status: ![](https://github.com/AppLoidx/c-http-server/workflows/make-master/badge.svg)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Rus documentation available [here](index.ru.md)
 
-### Markdown
+### Build
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```bash
+make all
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### Run
 
-### Jekyll Themes
+```bash
+./server
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/AppLoidx/c-http-server/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+### Static files
 
-### Support or Contact
+You can add static files to the `static` directory. 
+They will be automatically processed and mapped to url paths
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## Development
+
+### Controller mappings
+
+There is a simple controller mapping:
+```c
+  POST_MAPPING("/") {
+    puts("HTTP/1.1 200 OK\r\n\r\n");
+    puts("Post request received\r\n");
+    puts("Fetch the data using `payload` variable.");
+  }
+```
+
+```c
+  POST_MAPPING("/anime") {
+    puts("HTTP/1.1 200 OK\r\n\r\n");
+    puts("Wanna see anime?");
+  }
+```
+
+Feel free to use some util functions:
+```c
+  POST_MAPPING("/anime") {
+    response_ok();
+    puts("Wanna see anime?");
+  }
+```
+
+### Server static files and another media
+
+To add static files put them on the static folder. Authomaticly all files will be served as `text/html` files except of `css`
+
+If you want to map some controller don't forget to use HTTP header for response. There is some methods to do this:
+```c
+response_ok();
+```
+or
+```c
+response_media_css();
+```
+
+
