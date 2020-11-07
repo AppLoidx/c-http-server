@@ -40,6 +40,8 @@ char *request_header(const char *name);
  *
  * If you worked with redux you can think about this
  * method like a "root reducer" in your store
+ * 
+ * Read more : https://apploidx.github.io/c-http-server/route.html
  */
 void route();
 
@@ -47,7 +49,7 @@ void route();
  * This method will be called when nothing is mapped in
  * this uri.
  *
- * He will use the static folder (read more about this here: <link>)
+ * He will use the static folder (read more about this here: https://apploidx.github.io/c-http-server/)
  *
  * In short, it will write to client socket static files located in uri path
  */
