@@ -8,6 +8,10 @@ Implented methods: GET, POST
 You can add static files to the static directory. 
 They will be automatically processed and mapped to url paths
 
+The formatted documentation also be read online at:
+
+    https://apploidx.github.io/c-http-server/
+
 
 MIT License
 
