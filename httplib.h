@@ -15,7 +15,7 @@
 #ifndef _HTTPD_LIB___
 #define _HTTPD_LIB___
 
-#ifndef
+#ifndef MAX_FILE_NAME_LENGTH
 #define MAX_FILE_NAME_LENGTH 100
 #endif
 
