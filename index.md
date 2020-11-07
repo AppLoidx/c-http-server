@@ -2,7 +2,7 @@
 
 Repository build status: ![](https://github.com/AppLoidx/c-http-server/workflows/make-master/badge.svg)
 
-Rus documentation available [here](index.ru.md)
+Rus documentation available [here](index.ru.html)
 
 ### Build
 
