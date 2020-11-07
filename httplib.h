@@ -1,3 +1,17 @@
+/*
+ * MIT License
+ * Copyright (C) 2020 Arthur Kupriyanov
+ * 
+ * HTTP Server inspired by : 
+ * 
+ * laobubu, Wuhan, P.R.China 
+ * https://gist.github.com/laobubu/d6d0e9beb934b60b2e552c2d03e1409e
+ * 
+ * Abhijeet Rastogi, San Francisco Bay Area
+ * http://blog.abhijeetr.com/2010/04/very-simple-http-server-writen-in-c.html
+ * 
+ */
+
 #ifndef _HTTPD_LIB___
 #define _HTTPD_LIB___
 

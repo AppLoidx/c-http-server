@@ -1,3 +1,8 @@
+/*
+ * MIT License
+ * Copyright (C) 2020 Arthur Kupriyanov
+ */
+
 #include "httplib.h"
 #include "static.h"
 

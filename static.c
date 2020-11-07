@@ -1,3 +1,8 @@
+/*
+ * MIT License
+ * Copyright (C) 2020 Arthur Kupriyanov
+ */
+
 #include <dirent.h>
 #include <errno.h>
 #include <limits.h>
