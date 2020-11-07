@@ -15,9 +15,8 @@ void route() {
   ROUTE_START()
 
   POST_MAPPING("/") {
-    printf("HTTP/1.1 200 OK\r\n\r\n");
-    printf("Wow, seems that you POSTed %d bytes. \r\n", payload_size);
-    printf("Fetch the data using `payload` variable.");
+    response_ok();
+    puts("Hey, Yo!");
   }
 
   ROUTE_END()
