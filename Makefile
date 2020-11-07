@@ -1,6 +1,10 @@
+
+# MIT License
+# Copyright (C) 2020 Arthur Kupriyanov
+
+
 GCC=gcc
 COMPILE_FLAGS=-Wall -Werror -pedantic
-
 
 all: server
 
@@ -16,7 +20,7 @@ server: main.o httplib.o static.o
 	make clean-temp
 
 main.o: main.c httplib.h
-	$(GCC) $(COMPILE_FLAGS) -c -o main.o main.c
+	$(GCC) $(COMPILE_FLAGS) -c -o server.o server.c
 
 httplib.o: httplib.c httplib.h
 	$(GCC) $(COMPILE_FLAGS) -c -o httplib.o httplib.c
