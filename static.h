@@ -14,7 +14,7 @@
 #ifndef _STATIC_H___
 #define _STATIC_H___
 
-void writeFile(char *filename);
+void write_file(char *filename);
 void static_files(char *files[]);
 void list_dir(const char *dir_name, char *files[], int *index);
 

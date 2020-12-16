@@ -13,7 +13,7 @@
 
 #include "static.h"
 
-void writeFile(char *filename)
+void write_file(char *filename)
 {
   FILE *file = fopen(filename, "r");
   int c;
