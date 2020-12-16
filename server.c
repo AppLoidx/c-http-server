@@ -6,15 +6,18 @@
 #include "httplib.h"
 #include "static.h"
 
-int main(int c, char **v) {
+int main(int c, char **v)
+{
   serve_forever("12913");
   return 0;
 }
 
-void route() {
+void route()
+{
   ROUTE_START()
 
-  POST_MAPPING("/") {
+  POST_MAPPING("/")
+  {
     response_ok();
     puts("Hey, Yo!");
   }

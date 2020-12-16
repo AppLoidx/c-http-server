@@ -34,7 +34,8 @@ static int listenfd, clients[CONNMAX];
 static void startServer(const char *);
 static void respond(int);
 
-typedef struct {
+typedef struct
+{
   char *name, *value;
 } header_t;
 static header_t reqhdr[17] = {{"\0", "\0"}};
@@ -44,7 +45,8 @@ static char *buf;
 
 char *files[STATIC_MAX];
 
-void serve_forever(const char *PORT) {
+void serve_forever(const char *PORT)
+{
   struct sockaddr_in clientaddr;
   socklen_t addrlen;
 
@@ -62,13 +64,17 @@ void serve_forever(const char *PORT) {
   signal(SIGCHLD, SIG_IGN);
 
   // ACCEPT connections
-  while (1) {
+  while (1)
+  {
     addrlen = sizeof(clientaddr);
     clients[slot] = accept(listenfd, (struct sockaddr *)&clientaddr, &addrlen);
 
-    if (clients[slot] < 0) {
+    if (clients[slot] < 0)
+    {
       perror("trying to accept requests");
-    } else {
+    }
+    else
+    {
       if (fork() == 0) // executing on the another process
       {
         respond(slot);
@@ -82,7 +88,8 @@ void serve_forever(const char *PORT) {
 }
 
 // start server
-void startServer(const char *port) {
+void startServer(const char *port)
+{
 
   static_files(files);
 
@@ -93,12 +100,14 @@ void startServer(const char *port) {
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
-  if (getaddrinfo(NULL, port, &hints, &res) != 0) {
+  if (getaddrinfo(NULL, port, &hints, &res) != 0)
+  {
     perror("getaddrinfo() error");
     exit(1);
   }
   // socket and bind
-  for (p = res; p != NULL; p = p->ai_next) {
+  for (p = res; p != NULL; p = p->ai_next)
+  {
     int option = 1;
     listenfd = socket(p->ai_family, p->ai_socktype, 0);
     setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
@@ -107,7 +116,8 @@ void startServer(const char *port) {
     if (bind(listenfd, p->ai_addr, p->ai_addrlen) == 0)
       break;
   }
-  if (p == NULL) {
+  if (p == NULL)
+  {
     perror("socket() or bind()");
     exit(1);
   }
@@ -115,16 +125,19 @@ void startServer(const char *port) {
   freeaddrinfo(res);
 
   // listen for incoming connections
-  if (listen(listenfd, 1000000) != 0) {
+  if (listen(listenfd, 1000000) != 0)
+  {
     perror("listen() error");
     exit(1);
   }
 }
 
 // get request header
-char *request_header(const char *name) {
+char *request_header(const char *name)
+{
   header_t *h = reqhdr;
-  while (h->name) {
+  while (h->name)
+  {
     if (strcmp(h->name, name) == 0)
       return h->value;
     h++;
@@ -132,22 +145,26 @@ char *request_header(const char *name) {
   return NULL;
 }
 
-void respond(int n) {
+void respond(int n)
+{
   int rcvd;
 
   buf = malloc(65535);
   rcvd = recv(clients[n], buf, 65535, 0);
 
-  if (rcvd < 0) {
+  if (rcvd < 0)
+  {
 
     // receive error
     fprintf(stderr, ("recv() error\n"));
-
-  } else if (rcvd == 0) {
+  }
+  else if (rcvd == 0)
+  {
 
     fprintf(stderr, "Client disconnected upexpectedly.\n");
-
-  } else {
+  }
+  else
+  {
     // message received
 
     buf[rcvd] = '\0';
@@ -158,9 +175,12 @@ void respond(int n) {
 
     fprintf(stderr, "\x1b[32m + [%s] %s\x1b[0m\n", method, uri);
 
-    if ((qs = strchr(uri, '?')) != NULL) {
+    if ((qs = strchr(uri, '?')) != NULL)
+    {
       *qs++ = '\0'; // split URI
-    } else {
+    }
+    else
+    {
       qs = uri - 1; // use an empty string
     }
 
@@ -168,7 +188,8 @@ void respond(int n) {
     char *t = (char *)malloc(sizeof(char));
     char *t2 = (char *)malloc(sizeof(char));
 
-    while (h < reqhdr + 16) {
+    while (h < reqhdr + 16)
+    {
       char *k, *v, *t;
       k = strtok(NULL, "\r\n: \t");
       if (!k)
@@ -185,7 +206,7 @@ void respond(int n) {
         break;
     }
 
-    t++; // now the *t shall be the beginning of user payload
+    t++;                                   // now the *t shall be the beginning of user payload
     t2 = request_header("Content-Length"); // and the related header if there is
     payload = t;
     payload_size = t2 ? atol(t2) : (rcvd - (t - buf));
@@ -217,7 +238,8 @@ void respond(int n) {
  * Write HTTP/1.1 OK (200) status to client socket
  * with Content-Type: text/html
  */
-void response_ok() {
+void response_ok()
+{
   printf("HTTP/1.1 200 OK\n");
   printf("Content-Type: text/html\r\n\r\n");
 }
@@ -226,12 +248,14 @@ void response_ok() {
  * Write HTTP/1.1 OK (200) status to client socket
  * with Content-Type: text/css
  */
-void response_css_media() {
+void response_css_media()
+{
   printf("HTTP/1.1 200 OK\n");
   printf("Content-Type: text/css\r\n\r\n");
 }
 
-int ends_with(const char *str, const char *suffix) {
+int ends_with(const char *str, const char *suffix)
+{
   if (!str || !suffix)
     return 0;
   size_t lenstr = strlen(str);
@@ -241,19 +265,25 @@ int ends_with(const char *str, const char *suffix) {
   return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
 }
 
-int serve_static(char *uri) {
+int serve_static(char *uri)
+{
 
   char web_path[MAX_FILE_NAME_LENGTH];
   int index = 0;
   char *static_route_path = strcmp("/", uri) == 0 ? "index.html" : ++uri;
   sprintf(web_path, "static/%s", static_route_path);
 
-  while (files[index] != NULL) {
+  while (files[index] != NULL)
+  {
 
-    if (strcmp(files[index], web_path) == 0) {
-      if (ends_with(web_path, ".css")) {
+    if (strcmp(files[index], web_path) == 0)
+    {
+      if (ends_with(web_path, ".css"))
+      {
         response_css_media();
-      } else {
+      }
+      else
+      {
         response_ok();
       }
       writeFile(files[index]);

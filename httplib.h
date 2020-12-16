@@ -66,17 +66,21 @@ void response_ok();
 void response_css_media();
 
 // some interesting macro for `route()`
-#define ROUTE_START() if (0) {
-#define REQUEST_MAPPING(METHOD, URI)                                           \
-  }                                                                            \
-  else if (strcmp(URI, uri) == 0 && strcmp(METHOD, method) == 0) {
+#define ROUTE_START() \
+  if (0)              \
+  {
+#define REQUEST_MAPPING(METHOD, URI)                             \
+  }                                                              \
+  else if (strcmp(URI, uri) == 0 && strcmp(METHOD, method) == 0) \
+  {
 #define GET_MAPPING(URI) REQUEST_MAPPING("GET", URI)
 #define POST_MAPPING(URI) REQUEST_MAPPING("POST", URI)
-#define ROUTE_END()                                                            \
-  }                                                                            \
-  else if (serve_static(uri) != 0) {                                           \
-    puts("HTTP/1.1 404 Not Found\r\n\r\n"                                      \
-         "Page is not found.\r\n");                                            \
+#define ROUTE_END()                       \
+  }                                       \
+  else if (serve_static(uri) != 0)        \
+  {                                       \
+    puts("HTTP/1.1 404 Not Found\r\n\r\n" \
+         "Page is not found.\r\n");       \
   }
 
 #endif
