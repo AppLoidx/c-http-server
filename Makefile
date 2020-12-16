@@ -4,7 +4,7 @@
 
 
 GCC=gcc
-COMPILE_FLAGS=-Wall -Werror -pedantic
+COMPILE_FLAGS=-Wall -Werror -pedantic -pthread
 
 all: server
 

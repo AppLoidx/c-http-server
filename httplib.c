@@ -26,25 +26,49 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #define CONNMAX 1000
 #define STATIC_MAX 100
 
 static int listenfd, clients[CONNMAX];
-static void startServer(const char *);
+static void start_server(const char *);
 static void respond(int);
+static char *files[STATIC_MAX];
 
-typedef struct
+struct http_header
 {
   char *name, *value;
-} header_t;
-static header_t reqhdr[17] = {{"\0", "\0"}};
-static int clientfd;
+};
 
-static char *buf;
+struct serve_thread_args
+{
+  int clientfd;
+};
 
-char *files[STATIC_MAX];
+void *serve_pthread(void *args_p)
+{
+  struct serve_thread_args *args = (struct serve_thread_args *)args_p;
+  respond(args->clientfd);
+  return NULL;
+}
 
+void serve_wrapper(int clientfd)
+{
+  pthread_t thread;
+  struct serve_thread_args *args = malloc(sizeof(struct serve_thread_args));
+  args->clientfd = clientfd;
+  pthread_create(&thread, NULL, serve_pthread, args);
+}
+
+/**
+ * Serves for passed PORT
+ * 
+ * This function uses clients array if file descriptors,
+ * but access for this files will be only from on thread
+ * 
+ * However, request serving will be proceeded on multiple threads 
+ */
 void serve_forever(const char *PORT)
 {
   struct sockaddr_in clientaddr;
@@ -52,13 +76,12 @@ void serve_forever(const char *PORT)
 
   int slot = 0;
 
-  printf("Server started %shttp://127.0.0.1:%s%s\n", "\033[92m", PORT,
-         "\033[0m");
+  fprintf(stderr, "Server started %shttp://127.0.0.1:%s%s\n", "\033[92m", PORT, "\033[0m");
 
   int i;
   for (i = 0; i < CONNMAX; i++)
     clients[i] = -1; // there is no client connected
-  startServer(PORT);
+  start_server(PORT);
 
   // Ignore SIGCHLD to avoid zombie threads
   signal(SIGCHLD, SIG_IGN);
@@ -75,11 +98,7 @@ void serve_forever(const char *PORT)
     }
     else
     {
-      if (fork() == 0) // executing on the another process
-      {
-        respond(slot);
-        exit(0);
-      }
+      serve_wrapper(clients[slot]);
     }
 
     while (clients[slot] != -1)
@@ -88,7 +107,7 @@ void serve_forever(const char *PORT)
 }
 
 // start server
-void startServer(const char *port)
+void start_server(const char *port)
 {
 
   static_files(files);
@@ -135,7 +154,8 @@ void startServer(const char *port)
 // get request header
 char *request_header(const char *name)
 {
-  header_t *h = reqhdr;
+  struct http_header reqhdr[17] = {{"\0", "\0"}};
+  struct http_header *h = reqhdr;
   while (h->name)
   {
     if (strcmp(h->name, name) == 0)
@@ -145,12 +165,12 @@ char *request_header(const char *name)
   return NULL;
 }
 
-void respond(int n)
+void respond(int clientfd)
 {
   int rcvd;
 
-  buf = malloc(65535);
-  rcvd = recv(clients[n], buf, 65535, 0);
+  char *buf = malloc(65535);
+  rcvd = recv(clientfd, buf, 65535, 0);
 
   if (rcvd < 0)
   {
@@ -184,7 +204,8 @@ void respond(int n)
       qs = uri - 1; // use an empty string
     }
 
-    header_t *h = reqhdr;
+    struct http_header reqhdr[17] = {{"\0", "\0"}};
+    struct http_header *h = reqhdr;
     char *t = (char *)malloc(sizeof(char));
     char *t2 = (char *)malloc(sizeof(char));
 
@@ -212,8 +233,8 @@ void respond(int n)
     payload_size = t2 ? atol(t2) : (rcvd - (t - buf));
 
     // bind clientfd to stdout, making it easier to write
-    // easy, but not recommended, i think so :)
-    clientfd = clients[n];
+    // but not recommended, i think so :)
+
     dup2(clientfd, STDOUT_FILENO);
     close(clientfd);
 
@@ -231,7 +252,7 @@ void respond(int n)
       clientfd,
       SHUT_RDWR); // All further send and recieve operations are DISABLED...
   close(clientfd);
-  clients[n] = -1;
+  clientfd = -1;
 }
 
 /*
@@ -286,7 +307,7 @@ int serve_static(char *uri)
       {
         response_ok();
       }
-      writeFile(files[index]);
+      write_file(files[index]);
       return 0;
     }
 
